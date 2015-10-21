@@ -15,4 +15,4 @@
 
 ## Pivotal Link:
 
-[https://www.pivotaltracker.com/n/projects/1451276](https://www.pivotaltracker.com/n/projects/1451276)
+* [https://www.pivotaltracker.com/n/projects/1451276](https://www.pivotaltracker.com/n/projects/1451276)
