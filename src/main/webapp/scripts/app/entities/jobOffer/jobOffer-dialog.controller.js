@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('jobvacancyApp').controller('JobOfferDialogController',
-    ['$scope', '$stateParams', '$modalInstance', 'entity', 'JobOffer', 'User',
-        function($scope, $stateParams, $modalInstance, entity, JobOffer, User) {
+    ['$scope', '$stateParams', '$modalInstance', 'entity', 'JobOffer', 'User','isACopy',
+        function($scope, $stateParams, $modalInstance, entity, JobOffer, User, isACopy) {
 
         $scope.jobOffer = entity;
         $scope.users = User.query();
@@ -19,7 +19,14 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
 
         $scope.save = function () {
             if ($scope.jobOffer.id != null) {
-                JobOffer.update($scope.jobOffer, onSaveFinished);
+                if(isACopy === true){
+                    $scope.jobOffer.id = null;
+                    JobOffer.save($scope.jobOffer, onSaveFinished);
+                }
+                else{
+                    JobOffer.update($scope.jobOffer, onSaveFinished);
+                }
+
             } else {
                 JobOffer.save($scope.jobOffer, onSaveFinished);
             }
