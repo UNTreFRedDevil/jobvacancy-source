@@ -42,6 +42,7 @@ public class ApplicationResourceTest {
 
     private static final String APPLICANT_FULLNAME = "THE APPLICANT";
     private static final String APPLICANT_EMAIL = "APPLICANT@TEST.COM";
+    private static final String APPLICANT_INVALID_EMAIL = "   ()@TEST";
     private MockMvc restMockMvc;
 
     private static final long OFFER_ID = 1;
@@ -94,6 +95,22 @@ public class ApplicationResourceTest {
                 .andExpect(status().isAccepted());
 
         Mockito.verify(mailService).sendApplication(APPLICANT_EMAIL, offer);
+    }
+
+    @Test
+    @Transactional
+    public void cuandoCreoUnaJobApplicationUtilizandoUnEmailInvalidoObtengoUnBadRequest() throws Exception {
+        JobApplicationDTO dto = new JobApplicationDTO();
+        dto.setEmail(APPLICANT_INVALID_EMAIL);
+        dto.setFullname(APPLICANT_FULLNAME);
+        dto.setOfferId(OFFER_ID);
+
+        doNothing().when(mailService).sendApplication(APPLICANT_EMAIL, offer);
+
+        restMockMvc.perform(post("/api/Application")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(dto)))
+            .andExpect(status().isBadRequest());
     }
 
 }
