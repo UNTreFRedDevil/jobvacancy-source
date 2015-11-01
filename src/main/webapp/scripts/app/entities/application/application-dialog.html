@@ -25,21 +25,32 @@
                    ng-model="jobApplication.email"
                    ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
                    required>
-            <div ng-show="editForm.email.$invalid && !editForm.email.$pristine">
-                <p class="help-block">
+            <div ng-show="editForm.email.$invalid">
+                <p class="help-block"
+                   ng-show="editForm.email.$invalid && !editForm.email.$pristine">
                     Please enter a valid email.
                 </p>
-            </div>
-            <div ng-show="editForm.email.$error.required && !editForm.email.$pristine">
-                <p class="help-block">
+                <p class="help-block"
+                   ng-show="editForm.email.$error.required && !editForm.email.$pristine">
                     This field is required.
                 </p>
             </div>
-
-
-
         </div>
-
+        <div class="form-group">
+            <label for="field_resume">Link to your Resume</label>
+            <input type="url" class="form-control" name="resume" id="field_resume"
+                    ng-model="jobApplication.resume" required>
+            <div ng-show="editForm.resume.$invalid">
+                <p class="help-block"
+                   ng-show="editForm.resume.$invalid && !editForm.resume.$pristine">
+                    Please enter a valid URL.
+                </p>
+                <p class="help-block"
+                   ng-show="editForm.resume.$error.required && !editForm.resume.$pristine">
+                    This field is required.
+                </p>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">

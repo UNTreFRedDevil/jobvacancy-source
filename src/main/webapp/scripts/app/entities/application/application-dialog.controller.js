@@ -18,4 +18,5 @@ angular.module('jobvacancyApp').controller('ApplicationDialogController',
         $scope.clear = function() {
             $modalInstance.dismiss('cancel');
         };
+
 }]);
