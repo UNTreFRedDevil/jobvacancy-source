@@ -2,10 +2,7 @@ package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.JobOffer;
-import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
-import com.jobvacancy.repository.UserRepository;
-import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.service.MailService;
 import com.jobvacancy.web.rest.dto.JobApplicationDTO;
 import com.jobvacancy.web.rest.util.EmailUtil;
@@ -21,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -54,11 +49,9 @@ public class JobApplicationResource {
 
             return ResponseEntity.accepted()
                 .headers(HeaderUtil.createAlert("Application created and sent offer's owner", "")).body(null);
-        }
-        else{
+        } else {
             return ResponseEntity.badRequest()
-                .headers(HeaderUtil.createAlert("Email is not valid","")).body(null);
-
+                .headers(HeaderUtil.createAlert("Email is not valid", "")).body(null);
         }
     }
 }

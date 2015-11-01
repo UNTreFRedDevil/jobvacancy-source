@@ -4,10 +4,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -22,13 +20,13 @@ public class JobOffer implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull        
+    @NotNull
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @Column(name = "location")
     private String location;
-    
+
     @Column(name = "description")
     private String description;
 
@@ -86,7 +84,7 @@ public class JobOffer implements Serializable {
 
         JobOffer jobOffer = (JobOffer) o;
 
-        if ( ! Objects.equals(id, jobOffer.id)) return false;
+        if (!Objects.equals(id, jobOffer.id)) return false;
 
         return true;
     }
@@ -99,10 +97,10 @@ public class JobOffer implements Serializable {
     @Override
     public String toString() {
         return "JobOffer{" +
-                "id=" + id +
-                ", title='" + title + "'" +
-                ", location='" + location + "'" +
-                ", description='" + description + "'" +
-                '}';
+            "id=" + id +
+            ", title='" + title + "'" +
+            ", location='" + location + "'" +
+            ", description='" + description + "'" +
+            '}';
     }
 }

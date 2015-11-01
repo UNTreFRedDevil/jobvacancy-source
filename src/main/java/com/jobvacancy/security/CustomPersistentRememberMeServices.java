@@ -1,7 +1,6 @@
 package com.jobvacancy.security;
 
 import com.jobvacancy.domain.PersistentToken;
-import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.PersistentTokenRepository;
 import com.jobvacancy.repository.UserRepository;
 import org.joda.time.LocalDate;
@@ -28,9 +27,9 @@ import java.util.Arrays;
 
 /**
  * Custom implementation of Spring Security's RememberMeServices.
- * <p/>
+ * <p>
  * Persistent tokens are used by Spring Security to automatically log in users.
- * <p/>
+ * <p>
  * This is a specific implementation of Spring Security's remember-me authentication, but it is much
  * more powerful than the standard implementations:
  * <ul>
@@ -38,33 +37,28 @@ import java.util.Arrays;
  * <li>It stores more information, such as the IP address and the user agent, for audit purposes<li>
  * <li>When a user logs out, only his current session is invalidated, and not all of his sessions</li>
  * </ul>
- * <p/>
+ * <p>
  * This is inspired by:
  * <ul>
  * <li><a href="http://jaspan.com/improved_persistent_login_cookie_best_practice">Improved Persistent Login Cookie
  * Best Practice</a></li>
  * <li><a href="https://github.com/blog/1661-modeling-your-app-s-user-session">Github's "Modeling your App's User Session"</a></li></li>
  * </ul>
- * <p/>
+ * <p>
  * The main algorithm comes from Spring Security's PersistentTokenBasedRememberMeServices, but this class
  * couldn't be cleanly extended.
- * <p/>
+ * <p>
  */
 @Service
 public class CustomPersistentRememberMeServices extends
-        AbstractRememberMeServices {
-
-    private final Logger log = LoggerFactory.getLogger(CustomPersistentRememberMeServices.class);
+    AbstractRememberMeServices {
 
     // Token is valid for one month
     private static final int TOKEN_VALIDITY_DAYS = 31;
-
     private static final int TOKEN_VALIDITY_SECONDS = 60 * 60 * 24 * TOKEN_VALIDITY_DAYS;
-
     private static final int DEFAULT_SERIES_LENGTH = 16;
-
     private static final int DEFAULT_TOKEN_LENGTH = 16;
-
+    private final Logger log = LoggerFactory.getLogger(CustomPersistentRememberMeServices.class);
     private SecureRandom random;
 
     @Inject
@@ -127,7 +121,7 @@ public class CustomPersistentRememberMeServices extends
 
     /**
      * When logout occurs, only invalidate the current token, and not all user sessions.
-     * <p/>
+     * <p>
      * The standard Spring Security implementations are too basic: they invalidate all tokens for the
      * current user, so when he logs out from one browser, all his other sessions are destroyed.
      */
@@ -155,7 +149,7 @@ public class CustomPersistentRememberMeServices extends
     private PersistentToken getPersistentToken(String[] cookieTokens) {
         if (cookieTokens.length != 2) {
             throw new InvalidCookieException("Cookie token did not contain " + 2 +
-                    " tokens, but contained '" + Arrays.asList(cookieTokens) + "'");
+                " tokens, but contained '" + Arrays.asList(cookieTokens) + "'");
         }
         String presentedSeries = cookieTokens[0];
         String presentedToken = cookieTokens[1];
@@ -195,7 +189,7 @@ public class CustomPersistentRememberMeServices extends
 
     private void addCookie(PersistentToken token, HttpServletRequest request, HttpServletResponse response) {
         setCookie(
-                new String[]{token.getSeries(), token.getTokenValue()},
-                TOKEN_VALIDITY_SECONDS, request, response);
+            new String[]{token.getSeries(), token.getTokenValue()},
+            TOKEN_VALIDITY_SECONDS, request, response);
     }
 }

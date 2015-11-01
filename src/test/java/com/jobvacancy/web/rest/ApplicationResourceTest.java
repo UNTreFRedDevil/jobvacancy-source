@@ -43,11 +43,9 @@ public class ApplicationResourceTest {
     private static final String APPLICANT_FULLNAME = "THE APPLICANT";
     private static final String APPLICANT_EMAIL = "APPLICANT@TEST.COM";
     private static final String APPLICANT_INVALID_EMAIL = "   ()@TEST";
-    private MockMvc restMockMvc;
-
     private static final long OFFER_ID = 1;
     private static final String OFFER_TITLE = "SAMPLE_TEXT";
-
+    private MockMvc restMockMvc;
     @Mock
     private MailService mailService;
 
@@ -92,7 +90,7 @@ public class ApplicationResourceTest {
         restMockMvc.perform(post("/api/Application")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(dto)))
-                .andExpect(status().isAccepted());
+            .andExpect(status().isAccepted());
 
         Mockito.verify(mailService).sendApplication(APPLICANT_EMAIL, offer);
     }
