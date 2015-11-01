@@ -25,6 +25,11 @@
             <column name="metric" type="varchar(255)"/>
             <column name="value" type="bigint"/>
         </createTable>
-        
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/statistics.csv"
+                  separator=";"
+                  tableName="statistic">
+        </loadData>
+
     </changeSet>
 </databaseChangeLog>
