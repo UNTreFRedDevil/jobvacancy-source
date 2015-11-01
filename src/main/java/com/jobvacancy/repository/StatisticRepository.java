@@ -10,4 +10,8 @@ import java.util.List;
  */
 public interface StatisticRepository extends JpaRepository<Statistic,Long> {
 
+    @Query("select statistic from Statistic statistic where statistic.metric = 'Cantidad Total de Ofertas Publicadas'")
+    Statistic getPublishedJobOffers();
+
+
 }
