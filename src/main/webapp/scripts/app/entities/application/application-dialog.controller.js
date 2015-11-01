@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('jobvacancyApp').controller('ApplicationDialogController',
-    ['$scope', '$stateParams', '$modalInstance', 'entity', 'JobOffer','Application', 'User',
-        function($scope, $stateParams, $modalInstance, entity, JobOffer,Application, User) {
+    ['$scope', '$stateParams', '$modalInstance', 'entity', 'JobOffer','Application',
+        function($scope, $stateParams, $modalInstance, entity, JobOffer,Application) {
 
         $scope.jobApplication = entity;
-
 
         var onSaveFinished = function (result) {
             $scope.$emit('jobvacancyApp:jobOfferUpdate', result);
