@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.*;
  */
 public interface StatisticRepository extends JpaRepository<Statistic,Long> {
 
-    @Query("select statistic from Statistic statistic where statistic.metric = 'Cantidad Total de Ofertas Publicadas'")
+    @Query("select statistic from Statistic statistic where statistic.metric = 'Total JobOffers'")
     Statistic getPublishedJobOffers();
 
 
