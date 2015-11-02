@@ -42,10 +42,12 @@ public class ApplicationResourceTest {
 
     private static final String APPLICANT_FULLNAME = "THE APPLICANT";
     private static final String APPLICANT_EMAIL = "APPLICANT@TEST.COM";
+    private static final String APPLICANT_RESUME = "http://www.linkedin.com/in/applicant";
     private static final String APPLICANT_INVALID_EMAIL = "   ()@TEST";
     private static final long OFFER_ID = 1;
     private static final String OFFER_TITLE = "SAMPLE_TEXT";
     private MockMvc restMockMvc;
+
     @Mock
     private MailService mailService;
 
@@ -83,16 +85,17 @@ public class ApplicationResourceTest {
         JobApplicationDTO dto = new JobApplicationDTO();
         dto.setEmail(APPLICANT_EMAIL);
         dto.setFullname(APPLICANT_FULLNAME);
+        dto.setResume(APPLICANT_RESUME);
         dto.setOfferId(OFFER_ID);
 
-        doNothing().when(mailService).sendApplication(APPLICANT_EMAIL, offer);
+        doNothing().when(mailService).sendApplication(APPLICANT_EMAIL, APPLICANT_RESUME, offer);
 
         restMockMvc.perform(post("/api/Application")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(dto)))
             .andExpect(status().isAccepted());
 
-        Mockito.verify(mailService).sendApplication(APPLICANT_EMAIL, offer);
+        Mockito.verify(mailService).sendApplication(APPLICANT_EMAIL, APPLICANT_RESUME, offer);
     }
 
     @Test
@@ -101,9 +104,10 @@ public class ApplicationResourceTest {
         JobApplicationDTO dto = new JobApplicationDTO();
         dto.setEmail(APPLICANT_INVALID_EMAIL);
         dto.setFullname(APPLICANT_FULLNAME);
+        dto.setResume(APPLICANT_RESUME);
         dto.setOfferId(OFFER_ID);
 
-        doNothing().when(mailService).sendApplication(APPLICANT_EMAIL, offer);
+        doNothing().when(mailService).sendApplication(APPLICANT_INVALID_EMAIL, APPLICANT_RESUME, offer);
 
         restMockMvc.perform(post("/api/Application")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

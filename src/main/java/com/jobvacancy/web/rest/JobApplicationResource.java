@@ -45,7 +45,7 @@ public class JobApplicationResource {
 
         if (EmailUtil.emailIsValid(jobApplication.getEmail())) {
             JobOffer jobOffer = jobOfferRepository.findOne(jobApplication.getOfferId());
-            this.mailService.sendApplication(jobApplication.getEmail(), jobOffer);
+            this.mailService.sendApplication(jobApplication.getEmail(), jobApplication.getResume(), jobOffer);
 
             return ResponseEntity.accepted()
                 .headers(HeaderUtil.createAlert("Application created and sent offer's owner", "")).body(null);
@@ -54,4 +54,5 @@ public class JobApplicationResource {
                 .headers(HeaderUtil.createAlert("Email is not valid", "")).body(null);
         }
     }
+
 }
