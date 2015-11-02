@@ -3,9 +3,11 @@ package com.jobvacancy.web.rest;
 import com.jobvacancy.Application;
 import com.jobvacancy.domain.Authority;
 import com.jobvacancy.domain.JobOffer;
+import com.jobvacancy.domain.Statistic;
 import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
 
+import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.repository.UserRepository;
 import com.jobvacancy.security.AuthoritiesConstants;
 import com.jobvacancy.service.MailService;
@@ -73,8 +75,14 @@ public class JobOfferResourceTest {
     @Inject
     private UserRepository userRepository;
 
+
     @Mock
     private UserRepository mockUserRepository;
+
+    @Mock
+    private StatisticRepository mockStatisticRepository;
+    @Inject
+    private StatisticRepository statisticRepository;
 
     @Inject
     private JobOfferRepository jobOfferRepository;
@@ -101,6 +109,10 @@ public class JobOfferResourceTest {
         Optional<User> user =  userRepository.findOneByLogin("user");
         when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
 
+        Statistic statistic = statisticRepository.getPublishedJobOffers();
+        when(mockStatisticRepository.getPublishedJobOffers()).thenReturn(statistic);
+
+        ReflectionTestUtils.setField(jobOfferResource, "statisticRepository", mockStatisticRepository);
         ReflectionTestUtils.setField(jobOfferResource, "userRepository", mockUserRepository);
         this.restJobOfferMockMvc = MockMvcBuilders.standaloneSetup(jobOfferResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
