@@ -2,9 +2,11 @@ package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.JobOffer;
+import com.jobvacancy.domain.Statistic;
 import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
 import com.jobvacancy.repository.UserRepository;
+import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import com.jobvacancy.web.rest.util.PaginationUtil;
@@ -42,6 +44,9 @@ public class JobOfferResource {
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private StatisticRepository statisticRepository;
+
     /**
      * POST  /jobOffers -> Create a new jobOffer.
      */
@@ -58,6 +63,10 @@ public class JobOfferResource {
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);
         jobOffer.setOwner(currentUser.get());
         JobOffer result = jobOfferRepository.save(jobOffer);
+        Statistic totalJobOffers = statisticRepository.getPublishedJobOffers();
+        totalJobOffers.setValue(totalJobOffers.getValue()+1);
+        statisticRepository.save(totalJobOffers);
+
         return ResponseEntity.created(new URI("/api/jobOffers/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert("jobOffer", result.getId().toString()))
                 .body(result);

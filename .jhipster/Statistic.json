@@ -1,0 +1,18 @@
+{
+    "relationships": [],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "metric",
+            "fieldType": "String"
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "value",
+            "fieldType": "Long"
+        }
+    ],
+    "changelogDate": "20151030022222",
+    "dto": "no",
+    "pagination": "no"
+}
