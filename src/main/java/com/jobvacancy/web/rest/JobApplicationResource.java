@@ -4,8 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.JobOffer;
 import com.jobvacancy.repository.JobOfferRepository;
 import com.jobvacancy.service.MailService;
-import com.jobvacancy.web.rest.dto.JobApplicationDTO;
 import com.jobvacancy.service.util.EmailUtil;
+import com.jobvacancy.service.util.UrlUtil;
+import com.jobvacancy.web.rest.dto.JobApplicationDTO;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ public class JobApplicationResource {
     @Inject
     private MailService mailService;
 
-
     /**
      * POST  /Application -> Create a new jobOffer.
      */
@@ -44,11 +44,16 @@ public class JobApplicationResource {
         log.debug("REST request to save JobApplication : {}", jobApplication);
 
         if (EmailUtil.emailIsValid(jobApplication.getEmail())) {
-            JobOffer jobOffer = jobOfferRepository.findOne(jobApplication.getOfferId());
-            this.mailService.sendApplication(jobApplication.getEmail(), jobApplication.getResume(), jobOffer);
+            if (UrlUtil.urlIsValid(jobApplication.getResume())) {
+                JobOffer jobOffer = jobOfferRepository.findOne(jobApplication.getOfferId());
+                this.mailService.sendApplication(jobApplication.getEmail(), jobApplication.getResume(), jobOffer);
 
-            return ResponseEntity.accepted()
-                .headers(HeaderUtil.createAlert("Application created and sent offer's owner", "")).body(null);
+                return ResponseEntity.accepted()
+                    .headers(HeaderUtil.createAlert("Application created and sent offer's owner", "")).body(null);
+            } else {
+                return ResponseEntity.badRequest()
+                    .headers(HeaderUtil.createAlert("Resume is not a valid URL", "")).body(null);
+            }
         } else {
             return ResponseEntity.badRequest()
                 .headers(HeaderUtil.createAlert("Email is not valid", "")).body(null);

@@ -104,4 +104,5 @@ public class MailService {
         String subject = messageSource.getMessage("email.reset.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
+
 }
