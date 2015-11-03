@@ -5,7 +5,7 @@ import com.jobvacancy.domain.JobOffer;
 import com.jobvacancy.repository.JobOfferRepository;
 import com.jobvacancy.service.MailService;
 import com.jobvacancy.web.rest.dto.JobApplicationDTO;
-import com.jobvacancy.web.rest.util.EmailUtil;
+import com.jobvacancy.service.util.EmailUtil;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
