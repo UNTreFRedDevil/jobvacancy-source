@@ -53,10 +53,10 @@ public class MailService {
     }
 
     @Async
-    public void sendApplication(String applicantEmail, JobOffer offer) {
+    public void sendApplication(String applicantEmail, String applicantResume, JobOffer offer) {
         this.sendEmail(offer.getOwner().getEmail(),
             "[JobVacancy] New candidate",
-            "Hi," + applicantEmail + "applied for your offer:" + offer.getTitle(),
+            "Hi,\n\n" + applicantEmail + " applied for your offer: " + offer.getTitle() + "\n\nResume: " + applicantResume,
             false,
             false);
     }
@@ -104,4 +104,5 @@ public class MailService {
         String subject = messageSource.getMessage("email.reset.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
+
 }

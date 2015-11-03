@@ -1,36 +1,27 @@
 package com.jobvacancy.web.rest;
 
 import com.jobvacancy.Application;
-import com.jobvacancy.domain.Authority;
 import com.jobvacancy.domain.JobOffer;
 import com.jobvacancy.domain.Statistic;
 import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
-
 import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.repository.UserRepository;
-import com.jobvacancy.security.AuthoritiesConstants;
-import com.jobvacancy.service.MailService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
-
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -40,12 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -75,12 +65,12 @@ public class JobOfferResourceTest {
     @Inject
     private UserRepository userRepository;
 
-
     @Mock
     private UserRepository mockUserRepository;
 
     @Mock
     private StatisticRepository mockStatisticRepository;
+
     @Inject
     private StatisticRepository statisticRepository;
 
@@ -96,8 +86,8 @@ public class JobOfferResourceTest {
     private MockMvc restJobOfferMockMvc;
 
     private JobOffer jobOffer;
-    private User user;
 
+    private User user;
 
     @PostConstruct
     public void setup() {
@@ -106,7 +96,7 @@ public class JobOfferResourceTest {
         ReflectionTestUtils.setField(jobOfferResource, "jobOfferRepository", jobOfferRepository);
 
         // TODO: this should be refactored in a based class because is a common concern
-        Optional<User> user =  userRepository.findOneByLogin("user");
+        Optional<User> user = userRepository.findOneByLogin("user");
         when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
 
         Statistic statistic = statisticRepository.getPublishedJobOffers();
@@ -128,27 +118,6 @@ public class JobOfferResourceTest {
         jobOffer.setDescription(DEFAULT_DESCRIPTION);
     }
 
-    public static class MockSecurityContext implements SecurityContext {
-
-        private static final long serialVersionUID = -1386535243513362694L;
-
-        private Authentication authentication;
-
-        public MockSecurityContext(Authentication authentication) {
-            this.authentication = authentication;
-        }
-
-        @Override
-        public Authentication getAuthentication() {
-            return this.authentication;
-        }
-
-        @Override
-        public void setAuthentication(Authentication authentication) {
-            this.authentication = authentication;
-        }
-    }
-
     @Test
     @Transactional
     public void createJobOffer() throws Exception {
@@ -157,9 +126,9 @@ public class JobOfferResourceTest {
         // Create the JobOffer
 
         restJobOfferMockMvc.perform(post("/api/jobOffers")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-                .andExpect(status().isCreated());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
+            .andExpect(status().isCreated());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -180,9 +149,9 @@ public class JobOfferResourceTest {
         // Create the JobOffer, which fails.
 
         restJobOfferMockMvc.perform(post("/api/jobOffers")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-                .andExpect(status().isBadRequest());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
+            .andExpect(status().isBadRequest());
 
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
         assertThat(jobOffers).hasSize(databaseSizeBeforeTest);
@@ -197,12 +166,12 @@ public class JobOfferResourceTest {
 
         // Get all the jobOffers
         restJobOfferMockMvc.perform(get("/api/jobOffers"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(jobOffer.getId().intValue())))
-                .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
-                .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
-                .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(jobOffer.getId().intValue())))
+            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
+            .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
 
     @Test
@@ -226,7 +195,7 @@ public class JobOfferResourceTest {
     public void getNonExistingJobOffer() throws Exception {
         // Get the jobOffer
         restJobOfferMockMvc.perform(get("/api/jobOffers/{id}", Long.MAX_VALUE))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -235,7 +204,7 @@ public class JobOfferResourceTest {
         // Initialize the database
         jobOfferRepository.saveAndFlush(jobOffer);
 
-		int databaseSizeBeforeUpdate = jobOfferRepository.findAll().size();
+        int databaseSizeBeforeUpdate = jobOfferRepository.findAll().size();
 
         // Update the jobOffer
         jobOffer.setTitle(UPDATED_TITLE);
@@ -244,9 +213,9 @@ public class JobOfferResourceTest {
 
 
         restJobOfferMockMvc.perform(put("/api/jobOffers")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-                .andExpect(status().isOk());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
+            .andExpect(status().isOk());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -263,15 +232,36 @@ public class JobOfferResourceTest {
         // Initialize the database
         jobOfferRepository.saveAndFlush(jobOffer);
 
-		int databaseSizeBeforeDelete = jobOfferRepository.findAll().size();
+        int databaseSizeBeforeDelete = jobOfferRepository.findAll().size();
 
         // Get the jobOffer
         restJobOfferMockMvc.perform(delete("/api/jobOffers/{id}", jobOffer.getId())
-                .accept(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
 
         // Validate the database is empty
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
         assertThat(jobOffers).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    public static class MockSecurityContext implements SecurityContext {
+
+        private static final long serialVersionUID = -1386535243513362694L;
+
+        private Authentication authentication;
+
+        public MockSecurityContext(Authentication authentication) {
+            this.authentication = authentication;
+        }
+
+        @Override
+        public Authentication getAuthentication() {
+            return this.authentication;
+        }
+
+        @Override
+        public void setAuthentication(Authentication authentication) {
+            this.authentication = authentication;
+        }
     }
 }

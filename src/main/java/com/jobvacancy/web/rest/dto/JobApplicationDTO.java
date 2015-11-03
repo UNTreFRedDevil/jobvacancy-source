@@ -1,10 +1,11 @@
 package com.jobvacancy.web.rest.dto;
 
-/**
- * Created by nicopaez on 10/11/15.
- */
 public class JobApplicationDTO {
+
     private Long offerId;
+    private String fullname;
+    private String email;
+    private String resume;
 
     public Long getOfferId() {
         return offerId;
@@ -22,8 +23,6 @@ public class JobApplicationDTO {
         this.fullname = fullname;
     }
 
-    private String fullname;
-
     public String getEmail() {
         return email;
     }
@@ -32,5 +31,12 @@ public class JobApplicationDTO {
         this.email = email;
     }
 
-    private String email;
+    public String getResume() {
+        return resume;
+    }
+
+    public void setResume(String resume) {
+        this.resume = resume;
+    }
+
 }
