@@ -31,7 +31,7 @@ public class JobOffer implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "startDate")
+    @Column(name = "start_date")
     private Date startDate;
 
     @ManyToOne

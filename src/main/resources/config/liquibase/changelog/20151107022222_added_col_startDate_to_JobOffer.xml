@@ -19,7 +19,7 @@
     -->
     <changeSet id="20151107022222" author="diegoTabares">
         <addColumn tableName="JOB_OFFER">
-            <column name="startDate" type="date">
+            <column name="start_date" type="date">
             </column>
         </addColumn>
     </changeSet>
