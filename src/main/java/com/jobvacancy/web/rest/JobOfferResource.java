@@ -10,6 +10,7 @@ import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import com.jobvacancy.web.rest.util.PaginationUtil;
+import org.joda.time.DateTimeComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -61,11 +62,19 @@ public class JobOfferResource {
     @Timed
     public ResponseEntity<JobOffer> createJobOffer(@Valid @RequestBody JobOffer jobOffer) throws URISyntaxException {
         log.debug("REST request to save JobOffer : {}", jobOffer);
+        Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         if (jobOffer.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new jobOffer cannot already have an ID").body(null);
         }
         if (jobOffer.getStartDate() == null){
-            jobOffer.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            jobOffer.setStartDate(today);
+        }
+        else{
+            int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
+            if(dateComparation < 0){
+                return ResponseEntity.badRequest().header("Failure","A jobOffers start date cannot be in the past").body(null);
+
+            }
         }
         String currentLogin = SecurityUtils.getCurrentLogin();
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);
