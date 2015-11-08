@@ -2,6 +2,7 @@ package com.jobvacancy.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,6 +33,7 @@ public class JobOffer implements Serializable {
     private String description;
 
     @Column(name = "start_date")
+    @Type(type="date")
     private Date startDate;
 
     @ManyToOne
