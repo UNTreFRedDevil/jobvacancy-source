@@ -35,4 +35,54 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
         $scope.clear = function() {
             $modalInstance.dismiss('cancel');
         };
+       $scope.today = function () {
+            $scope.jobOffer.startDate = new Date();
+        };
+        $scope.today();
+        $scope.open = function($event) {
+            $scope.status.opened = true;
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yy'
+        };
+
+        $scope.status = {
+            opened: false
+        };
+
+        $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
+
+        var tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          var afterTomorrow = new Date();
+          afterTomorrow.setDate(tomorrow.getDate() + 2);
+          $scope.events =
+            [
+              {
+                date: tomorrow,
+                status: 'full'
+              },
+              {
+                date: afterTomorrow,
+                status: 'partially'
+              }
+            ];
+
+          $scope.getDayClass = function(date, mode) {
+            if (mode === 'day') {
+              var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+              for (var i=0;i<$scope.events.length;i++){
+                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+                if (dayToCheck === currentDay) {
+                  return $scope.events[i].status;
+                }
+              }
+            }
+
+            return '';
+          };
 }]);
