@@ -10,9 +10,11 @@ import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import com.jobvacancy.web.rest.util.PaginationUtil;
+import org.joda.time.DateTimeComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.ZoneId;
+import java.util.Date;
+import java.time.LocalDate;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -56,8 +62,19 @@ public class JobOfferResource {
     @Timed
     public ResponseEntity<JobOffer> createJobOffer(@Valid @RequestBody JobOffer jobOffer) throws URISyntaxException {
         log.debug("REST request to save JobOffer : {}", jobOffer);
+        Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         if (jobOffer.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new jobOffer cannot already have an ID").body(null);
+        }
+        if (jobOffer.getStartDate() == null){
+            jobOffer.setStartDate(today);
+        }
+        else{
+            int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
+            if(dateComparation < 0){
+                return ResponseEntity.badRequest().header("Failure","A jobOffers start date cannot be in the past").body(null);
+
+            }
         }
         String currentLogin = SecurityUtils.getCurrentLogin();
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);
@@ -93,19 +110,6 @@ public class JobOfferResource {
     /**
      * GET  /jobOffers -> get all the jobOffers.
      */
-/*
-    @RequestMapping(value = "/jobOffers",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    public ResponseEntity<List<JobOffer>> getAllJobOffers(Pageable pageable)
-        throws URISyntaxException {
-        Page<JobOffer> page = jobOfferRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/jobOffers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-*/
-
     @RequestMapping(value = "/jobOffers",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
@@ -232,7 +236,7 @@ public class JobOfferResource {
     @Timed
     public ResponseEntity<List<JobOffer>> getAllOffers(Pageable pageable)
             throws URISyntaxException {
-        Page<JobOffer> page = jobOfferRepository.findAll(pageable);
+        Page<JobOffer> page = new PageImpl(jobOfferRepository.findAllCurrent());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/offers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

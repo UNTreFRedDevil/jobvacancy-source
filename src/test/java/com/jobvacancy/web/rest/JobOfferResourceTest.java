@@ -7,6 +7,7 @@ import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.JobOfferRepository;
 import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.repository.UserRepository;
+import org.joda.time.DateTimeComparator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,8 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -120,11 +125,11 @@ public class JobOfferResourceTest {
 
     @Test
     @Transactional
-    public void createJobOffer() throws Exception {
+    public void whenAJobOfferisDefinedWithoutAStartDateItShouldBeCreatedOkAndWithTodaysDate() throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
+        Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         // Create the JobOffer
-
         restJobOfferMockMvc.perform(post("/api/jobOffers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
@@ -137,6 +142,54 @@ public class JobOfferResourceTest {
         assertThat(testJobOffer.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testJobOffer.getLocation()).isEqualTo(DEFAULT_LOCATION);
         assertThat(testJobOffer.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(today, testJobOffer.getStartDate());
+        assertThat(dateComparation).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    public void whenAJobOfferisDefinedWithAStartDateInTheFutureItShouldBeCreatedOk() throws Exception {
+        int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
+
+        //Set the start date in the future
+        Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+        jobOffer.setStartDate(tomorrow);
+        // Create the JobOffer
+        restJobOfferMockMvc.perform(post("/api/jobOffers")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
+            .andExpect(status().isCreated());
+
+        // Validate the JobOffer in the database
+        List<JobOffer> jobOffers = jobOfferRepository.findAll();
+        assertThat(jobOffers).hasSize(databaseSizeBeforeCreate + 1);
+        JobOffer testJobOffer = jobOffers.get(jobOffers.size() - 1);
+        assertThat(testJobOffer.getTitle()).isEqualTo(DEFAULT_TITLE);
+        assertThat(testJobOffer.getLocation()).isEqualTo(DEFAULT_LOCATION);
+        assertThat(testJobOffer.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(tomorrow, testJobOffer.getStartDate());
+        assertThat(dateComparation).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    public void whenAJobOfferisDefinedWithAStartDateInThePastItShouldNotBeCreatedAndShouldReturnBadRequest() throws Exception {
+        int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
+
+        //Set the start date in the past
+        Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date yesterday = new Date(today.getTime() - TimeUnit.DAYS.toMillis( 1 ));
+        jobOffer.setStartDate(yesterday);
+        // Create the JobOffer
+        restJobOfferMockMvc.perform(post("/api/jobOffers")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the JobOffer in the database
+        List<JobOffer> jobOffers = jobOfferRepository.findAll();
+        assertThat(jobOffers).hasSize(databaseSizeBeforeCreate);
     }
 
     @Test

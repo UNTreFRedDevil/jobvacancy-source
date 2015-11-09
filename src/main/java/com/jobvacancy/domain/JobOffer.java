@@ -2,10 +2,12 @@ package com.jobvacancy.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -29,6 +31,10 @@ public class JobOffer implements Serializable {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "start_date")
+    @Type(type="date")
+    private Date startDate;
 
     @ManyToOne
     private User owner;
@@ -71,6 +77,14 @@ public class JobOffer implements Serializable {
 
     public void setOwner(User user) {
         this.owner = user;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     @Override
