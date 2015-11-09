@@ -41,7 +41,7 @@
         <div class="form-group">
             <label for="field_description">Start Date</label>
             <p class="input-group">
-                <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="jobOffer.startDate"
+                <input type="text" name="startDate" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="jobOffer.startDate"
                        is-open="status.opened" datepicker-options="dateOptions" close-text="Close"
                        date-disabled="disabled(date, mode)"/>
                 <span class="input-group-btn">
@@ -51,12 +51,18 @@
                 </span>
             </p>
         </div>
+        <div ng-show="editForm.startDate.$invalid">
+            <p class="help-block"
+               ng-show="editForm.startDate.$error">
+                The Job Offer was not saved, as the start date can not be in the past.
+            </p>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
             <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
         </button>
-        <button type="submit" ng-disabled="editForm.$invalid || editForm.$submitted" class="btn btn-primary">
+        <button type="submit" id="save-button" ng-disabled="editForm.$invalid || editForm.$submitted" class="btn btn-primary">
             <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
         </button>
     </div>

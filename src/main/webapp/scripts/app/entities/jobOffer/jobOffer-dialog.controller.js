@@ -18,18 +18,30 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
         };
 
         $scope.save = function () {
-            if ($scope.jobOffer.id != null) {
-                if(isACopy === true){
-                    $scope.jobOffer.id = null;
+            if (compareDates() === true){
+                $scope.editForm.startDate.$invalid=false;
+                $scope.editForm.startDate.$valid=true;
+                $scope.editForm.startDate.$error=false;
+                if ($scope.jobOffer.id != null) {
+                    if(isACopy === true){
+                        $scope.jobOffer.id = null;
+                        JobOffer.save($scope.jobOffer, onSaveFinished);
+                    }
+                    else{
+                        JobOffer.update($scope.jobOffer, onSaveFinished);
+                    }
+
+                } else {
                     JobOffer.save($scope.jobOffer, onSaveFinished);
                 }
-                else{
-                    JobOffer.update($scope.jobOffer, onSaveFinished);
-                }
-
-            } else {
-                JobOffer.save($scope.jobOffer, onSaveFinished);
             }
+            else{
+                $scope.editForm.startDate.$invalid=true;
+                $scope.editForm.startDate.$valid=false;
+                $scope.editForm.startDate.$error=true;
+                document.getElementById("save-button").disabled = false;
+            }
+
         };
 
         $scope.clear = function() {
@@ -51,8 +63,26 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
             opened: false
         };
 
-        $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
+        var compareDates = function() {
+
+            if($scope.jobOffer.startDate === null){
+                return true;
+            }
+            var today = new Date();
+            today.setHours(0);
+            today.setMilliseconds(0);
+            today.setMinutes(0);
+            today.setSeconds(0);
+            var inputDate = new Date($scope.jobOffer.startDate);
+            inputDate.setHours(0);
+            inputDate.setMilliseconds(0);
+            inputDate.setMinutes(0);
+            inputDate.setSeconds(0);
+            var compare = inputDate.getTime() >= today.getTime();
+            return compare;
+        };
+
+
 
         var tomorrow = new Date();
           tomorrow.setDate(tomorrow.getDate() + 1);
