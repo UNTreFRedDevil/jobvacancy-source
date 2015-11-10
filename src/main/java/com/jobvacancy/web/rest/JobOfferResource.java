@@ -204,9 +204,7 @@ public class JobOfferResource {
     public ResponseEntity<JobOffer> getJobOffer(@PathVariable Long id) {
         log.debug("REST request to get JobOffer : {}", id);
         return Optional.ofNullable(jobOfferRepository.findOne(id))
-            .map(jobOffer -> new ResponseEntity<>(
-                jobOffer,
-                HttpStatus.OK))
+            .map(jobOffer -> new ResponseEntity<>(jobOffer, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
