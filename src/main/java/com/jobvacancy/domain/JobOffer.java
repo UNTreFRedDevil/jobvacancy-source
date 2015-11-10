@@ -33,7 +33,7 @@ public class JobOffer implements Serializable {
     private String description;
 
     @Column(name = "start_date")
-    @Type(type="date")
+    @Type(type = "date")
     private Date startDate;
 
     @Column(name = "applications_count")
