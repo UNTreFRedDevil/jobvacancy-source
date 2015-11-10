@@ -48,6 +48,9 @@ public class JobApplicationResource {
                 JobOffer jobOffer = jobOfferRepository.findOne(jobApplication.getOfferId());
                 this.mailService.sendApplication(jobApplication.getEmail(), jobApplication.getResume(), jobOffer);
 
+                jobOffer.setApplicationsCount(jobOffer.getApplicationsCount() + 1);
+                jobOfferRepository.save(jobOffer);
+
                 return ResponseEntity.accepted()
                     .headers(HeaderUtil.createAlert("Application created and sent offer's owner", "")).body(null);
             } else {
