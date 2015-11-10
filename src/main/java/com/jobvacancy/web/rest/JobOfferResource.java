@@ -41,6 +41,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class JobOfferResource {
 
+    private static final Long INITIAL_APPLICATIONS_COUNT = new Long(0);
     private final Logger log = LoggerFactory.getLogger(JobOfferResource.class);
 
     @Inject
@@ -77,6 +78,7 @@ public class JobOfferResource {
         String currentLogin = SecurityUtils.getCurrentLogin();
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);
         jobOffer.setOwner(currentUser.get());
+        jobOffer.setApplicationsCount(INITIAL_APPLICATIONS_COUNT);
         JobOffer result = jobOfferRepository.save(jobOffer);
         Statistic totalJobOffers = statisticRepository.getPublishedJobOffers();
         totalJobOffers.setValue(totalJobOffers.getValue() + 1);
