@@ -19,10 +19,9 @@ public class Statistic implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    
     @Column(name = "metric")
     private String metric;
-    
+
     @Column(name = "value")
     private Long value;
 
@@ -61,7 +60,7 @@ public class Statistic implements Serializable {
 
         Statistic statistic = (Statistic) o;
 
-        if ( ! Objects.equals(id, statistic.id)) return false;
+        if (!Objects.equals(id, statistic.id)) return false;
 
         return true;
     }
@@ -74,9 +73,9 @@ public class Statistic implements Serializable {
     @Override
     public String toString() {
         return "Statistic{" +
-                "id=" + id +
-                ", metric='" + metric + "'" +
-                ", value='" + value + "'" +
-                '}';
+            "id=" + id +
+            ", metric='" + metric + "'" +
+            ", value='" + value + "'" +
+            '}';
     }
 }

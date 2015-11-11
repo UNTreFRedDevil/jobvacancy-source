@@ -33,8 +33,11 @@ public class JobOffer implements Serializable {
     private String description;
 
     @Column(name = "start_date")
-    @Type(type="date")
+    @Type(type = "date")
     private Date startDate;
+
+    @Column(name = "applications_count")
+    private Long applicationsCount;
 
     @ManyToOne
     private User owner;
@@ -87,6 +90,14 @@ public class JobOffer implements Serializable {
         this.startDate = startDate;
     }
 
+    public Long getApplicationsCount() {
+        return this.applicationsCount;
+    }
+
+    public void setApplicationsCount(Long applicationsCount) {
+        this.applicationsCount = applicationsCount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -115,6 +126,8 @@ public class JobOffer implements Serializable {
             ", title='" + title + "'" +
             ", location='" + location + "'" +
             ", description='" + description + "'" +
+            ", startDate='" + startDate + "'" +
+            ", applicationsCount=" + applicationsCount +
             '}';
     }
 }

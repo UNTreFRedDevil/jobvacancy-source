@@ -46,6 +46,7 @@ public class ApplicationResourceTest {
     private static final String APPLICANT_INVALID_EMAIL = "   ()@TEST";
     private static final String APPLICANT_INVALID_RESUME = "www.linkedin com/in/applicant";
     private static final long OFFER_ID = 1;
+    private static final long OFFER_APPLICATIONS_COUNT = 0;
     private static final String OFFER_TITLE = "SAMPLE_TEXT";
     private MockMvc restMockMvc;
 
@@ -71,6 +72,7 @@ public class ApplicationResourceTest {
         offer.setTitle(OFFER_TITLE);
         offer.setId(OFFER_ID);
         offer.setOwner(user.get());
+        offer.setApplicationsCount(OFFER_APPLICATIONS_COUNT);
         when(jobOfferRepository.findOne(OFFER_ID)).thenReturn(offer);
         JobApplicationResource jobApplicationResource = new JobApplicationResource();
         ReflectionTestUtils.setField(jobApplicationResource, "jobOfferRepository", jobOfferRepository);
