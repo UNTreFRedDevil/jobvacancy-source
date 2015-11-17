@@ -8,12 +8,7 @@
     </div>
     <div class="modal-body">
         <jh-alert-error></jh-alert-error>
-<!--
-        <div class="form-group">
-            <input type="hidden" class="form-control" id="id" name="id"
-                    ng-model="jobOffer.id" readonly>
-        </div>
--->
+
         <div class="form-group">
             <label for="field_title">Title</label>
             <input type="text" class="form-control" name="title" id="field_title"
@@ -29,14 +24,21 @@
         <div class="form-group">
             <label for="field_location">Location</label>
             <input type="text" class="form-control" name="location" id="field_location"
-                    ng-model="jobOffer.location"
-                    >
+                    ng-model="jobOffer.location">
         </div>
         <div class="form-group">
             <label for="field_description">Description</label>
             <input type="text" class="form-control" name="description" id="field_description"
-                    ng-model="jobOffer.description"
-                    >
+                    ng-model="jobOffer.description">
+        </div>
+        <div class="form-group">
+            <label for="field_status">Status</label>
+            <select class="form-control" name="status" ng-model="jobOffer.status" id="field_status">
+                <option value="AVAILABLE">Available</option>
+                <option value="JOBVACANCY_HIRED">Satisfied with a JobVacancy candidate</option>
+                <option value="EXTERNAL_HIRED">Satisfied with an external candidate</option>
+                <option value="CANCELED">Canceled offer, no one was hired</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="field_description">Start Date</label>
