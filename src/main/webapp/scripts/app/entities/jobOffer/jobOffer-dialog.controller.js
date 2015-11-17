@@ -18,10 +18,17 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
         };
 
         $scope.save = function () {
-            if (compareDates() === true){
+
+            if(typeof $scope.jobOffer.endDate == 'undefined'){
+                $scope.jobOffer.endDate = null;
+            }
+            if (validateDate($scope.jobOffer.startDate) === true && validateDate($scope.jobOffer.endDate) === true){
                 $scope.editForm.startDate.$invalid=false;
                 $scope.editForm.startDate.$valid=true;
                 $scope.editForm.startDate.$error=false;
+                $scope.editForm.endDate.$invalid=false;
+                $scope.editForm.endDate.$valid=true;
+                $scope.editForm.endDate.$error=false;
                 if ($scope.jobOffer.id != null) {
                     if(isACopy === true){
                         $scope.jobOffer.id = null;
@@ -36,9 +43,16 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
                 }
             }
             else{
-                $scope.editForm.startDate.$invalid=true;
-                $scope.editForm.startDate.$valid=false;
-                $scope.editForm.startDate.$error=true;
+                if(validateDate($scope.jobOffer.startDate) === false){
+                    $scope.editForm.startDate.$invalid=true;
+                    $scope.editForm.startDate.$valid=false;
+                    $scope.editForm.startDate.$error=true;
+                }
+                if(validateDate($scope.jobOffer.endDate) === false){
+                    $scope.editForm.endDate.$invalid=true;
+                    $scope.editForm.endDate.$valid=false;
+                    $scope.editForm.endDate.$error=true;
+                }
                 document.getElementById("save-button").disabled = false;
             }
 
@@ -48,71 +62,83 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
             $modalInstance.dismiss('cancel');
         };
        $scope.today = function () {
-            $scope.jobOffer.startDate = new Date();
-        };
-        $scope.today();
-        $scope.open = function($event) {
-            $scope.status.opened = true;
-        };
-
-        $scope.dateOptions = {
-            formatYear: 'yy'
-        };
-
-        $scope.status = {
-            opened: false
-        };
-
-        var compareDates = function() {
-
-            if($scope.jobOffer.startDate === null){
-                return true;
+            if ($scope.jobOffer.startDate == null){
+                $scope.jobOffer.startDate = new Date();
             }
-            var today = new Date();
-            today.setHours(0);
-            today.setMilliseconds(0);
-            today.setMinutes(0);
-            today.setSeconds(0);
-            var inputDate = new Date($scope.jobOffer.startDate);
-            inputDate.setHours(0);
-            inputDate.setMilliseconds(0);
-            inputDate.setMinutes(0);
-            inputDate.setSeconds(0);
-            var compare = inputDate.getTime() >= today.getTime();
-            return compare;
+
         };
+       $scope.today();
+       $scope.openDatePickerStartdDate = function($event) {
+            $scope.statusDatePickerStartdDate.opened = true;
+       };
+
+       $scope.openDatePickerEndDate = function($event) {
+            $scope.statusDatePickerEndDate.opened = true;
+       };
+
+       $scope.dateOptions = {
+            formatYear: 'yy'
+       };
+
+       $scope.statusDatePickerStartdDate = {
+            opened: false
+       };
+
+       $scope.statusDatePickerEndDate = {
+           opened: false
+       };
+
+       var validateDate = function(dateToValidate) {
+           console.log("Date: " + dateToValidate);
+           if(dateToValidate === null){
+               return true;
+           }
+           var today = new Date();
+           today.setHours(0);
+           today.setMilliseconds(0);
+           today.setMinutes(0);
+           today.setSeconds(0);
+           var inputDate = new Date(dateToValidate);
+           inputDate.setHours(0);
+           inputDate.setMilliseconds(0);
+           inputDate.setMinutes(0);
+           inputDate.setSeconds(0);
+           var compare = inputDate.getTime() >= today.getTime();
+           console.log("Comparo la fecha de hoy: " +today + " con la fecha ingresada: "+ inputDate +" y el resultado es: "+ compare);
+           return compare;
+       };
 
 
 
-        var tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          var afterTomorrow = new Date();
-          afterTomorrow.setDate(tomorrow.getDate() + 2);
-          $scope.events =
-            [
-              {
-                date: tomorrow,
-                status: 'full'
-              },
-              {
-                date: afterTomorrow,
-                status: 'partially'
-              }
-            ];
+       var tomorrow = new Date();
+       tomorrow.setDate(tomorrow.getDate() + 1);
+       var afterTomorrow = new Date();
+       afterTomorrow.setDate(tomorrow.getDate() + 2);
+       $scope.events =
+         [
+          {
+           date: tomorrow,
+           status: 'full'
+          },
+          {
+           date: afterTomorrow,
+           status: 'partially'
+          }
+         ];
 
-          $scope.getDayClass = function(date, mode) {
-            if (mode === 'day') {
-              var dayToCheck = new Date(date).setHours(0,0,0,0);
+       $scope.getDayClass = function(date, mode) {
+        if (mode === 'day') {
+            var dayToCheck = new Date(date).setHours(0,0,0,0);
 
-              for (var i=0;i<$scope.events.length;i++){
+            for (var i=0;i<$scope.events.length;i++){
                 var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
 
                 if (dayToCheck === currentDay) {
                   return $scope.events[i].status;
                 }
-              }
             }
+        }
 
-            return '';
-          };
+        return '';
+       };
 }]);
