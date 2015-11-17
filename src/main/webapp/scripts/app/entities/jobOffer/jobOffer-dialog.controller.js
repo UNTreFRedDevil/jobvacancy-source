@@ -66,6 +66,10 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
                 $scope.jobOffer.startDate = new Date();
             }
 
+            if ($scope.jobOffer.endDate == null){
+                $scope.jobOffer.endDate = new Date();
+            }
+
         };
        $scope.today();
        $scope.openDatePickerStartdDate = function($event) {
@@ -107,8 +111,6 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
            console.log("Comparo la fecha de hoy: " +today + " con la fecha ingresada: "+ inputDate +" y el resultado es: "+ compare);
            return compare;
        };
-
-
 
        var tomorrow = new Date();
        tomorrow.setDate(tomorrow.getDate() + 1);
