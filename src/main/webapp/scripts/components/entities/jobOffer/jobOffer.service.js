@@ -8,6 +8,12 @@ angular.module('jobvacancyApp')
                 method: 'GET',
                 transformResponse: function (data) {
                     data = angular.fromJson(data);
+                    console.log (JSON.stringify(data.startDate));
+                    //data.startDate = new Date(data.startDate);
+                    data.startDate =  DateUtils.convertLocaleDateFromServer(data.startDate);
+                    //data.endDate = new Date(data.endDate);
+                    data.endDate =  DateUtils.convertLocaleDateFromServer(data.endDate);
+                    console.log (JSON.stringify(data.startDate));
                     return data;
                 }
             },
