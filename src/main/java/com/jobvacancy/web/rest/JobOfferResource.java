@@ -10,6 +10,7 @@ import com.jobvacancy.repository.UserRepository;
 import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import com.jobvacancy.web.rest.util.PaginationUtil;
+import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTimeComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +69,18 @@ public class JobOfferResource {
         }
         if (jobOffer.getStartDate() == null) {
             jobOffer.setStartDate(today);
-        } else {
-            int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
-            if (dateComparation < 0) {
-                return ResponseEntity.badRequest().header("Failure", "A jobOffers start date cannot be in the past").body(null);
+        }
 
-            }
+        if (jobOffer.getEndDate() == null) {
+            jobOffer.setEndDate(DateUtils.addMonths(today,1));
+        }
+        int startDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
+        int endDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(), today);
+        if (startDateComparation < 0) {
+            return ResponseEntity.badRequest().header("Failure", "A jobOffers start date cannot be in the past").body(null);
+        }
+        if (endDateComparation < 0) {
+            return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be in the past").body(null);
         }
         String currentLogin = SecurityUtils.getCurrentLogin();
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);

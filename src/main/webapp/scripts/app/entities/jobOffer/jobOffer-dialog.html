@@ -44,10 +44,10 @@
             <label for="field_description">Start Date</label>
             <p class="input-group">
                 <input type="text" name="startDate" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="jobOffer.startDate"
-                       is-open="status.opened" datepicker-options="dateOptions" close-text="Close"
+                       is-open="statusDatePickerStartdDate.opened" datepicker-options="dateOptions" close-text="Close"
                        date-disabled="disabled(date, mode)"/>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="open($event)">
+                    <button type="button" class="btn btn-default" ng-click="openDatePickerStartdDate($event)">
                         <i class="glyphicon glyphicon-calendar"></i>
                     </button>
                 </span>
@@ -57,6 +57,25 @@
             <p class="help-block"
                ng-show="editForm.startDate.$error">
                 The Job Offer was not saved, as the start date can not be in the past.
+            </p>
+        </div>
+        <div class="form-group">
+            <label for="field_description">End Date</label>
+            <p class="input-group">
+                <input type="text" name="endDate" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="jobOffer.endDate"
+                       is-open="statusDatePickerEndDate.opened" datepicker-options="dateOptions" close-text="Close"
+                       date-disabled="disabled(date, mode)"/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="openDatePickerEndDate($event)">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                    </button>
+                </span>
+            </p>
+        </div>
+        <div ng-show="editForm.endDate.$invalid">
+            <p class="help-block"
+               ng-show="editForm.endDate.$error">
+                The Job Offer was not saved, as the end date can not be in the past.
             </p>
         </div>
     </div>

@@ -41,6 +41,10 @@ public class JobOffer implements Serializable {
     @Type(type = "date")
     private Date startDate;
 
+    @Column(name = "end_date")
+    @Type(type = "date")
+    private Date endDate;
+
     @Column(name = "applications_count")
     private Long applicationsCount;
 
@@ -103,6 +107,14 @@ public class JobOffer implements Serializable {
         this.startDate = startDate;
     }
 
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public Long getApplicationsCount() {
         return this.applicationsCount;
     }
@@ -141,6 +153,7 @@ public class JobOffer implements Serializable {
             ", description='" + description + "'" +
             ", status='" + status + "'" +
             ", startDate='" + startDate + "'" +
+            ", endDate='" + endDate + "'" +
             ", applicationsCount=" + applicationsCount +
             '}';
     }
