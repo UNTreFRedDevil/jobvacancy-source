@@ -51,7 +51,7 @@ angular.module('jobvacancyApp')
                         size: 'lg',
                         resolve: {
                             entity: function () {
-                                return {title: null, location: null, description: null, id: null};
+                                return {title: null, location: null, description: null, status: 'AVAILABLE', id: null};
                             },
                             isACopy: function(){return false;}
                         }
@@ -59,7 +59,7 @@ angular.module('jobvacancyApp')
                         $state.go('jobOffer', null, { reload: true });
                     }, function() {
                         $state.go('jobOffer');
-                    })
+                    });
                 }]
             })
             .state('jobOffer.copy', {
@@ -83,7 +83,7 @@ angular.module('jobvacancyApp')
                         $state.go('jobOffer', null, { reload: true });
                     }, function() {
                         $state.go('^');
-                    })
+                    });
                 }]
             })
             .state('jobOffer.edit', {
@@ -107,7 +107,7 @@ angular.module('jobvacancyApp')
                         $state.go('jobOffer', null, { reload: true });
                     }, function() {
                         $state.go('^');
-                    })
+                    });
                 }]
             });
     });

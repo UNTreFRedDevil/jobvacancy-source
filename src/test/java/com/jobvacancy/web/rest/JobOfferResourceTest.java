@@ -4,6 +4,7 @@ import com.jobvacancy.Application;
 import com.jobvacancy.domain.JobOffer;
 import com.jobvacancy.domain.Statistic;
 import com.jobvacancy.domain.User;
+import com.jobvacancy.domain.enumeration.JobOfferStatus;
 import com.jobvacancy.repository.JobOfferRepository;
 import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.repository.UserRepository;
@@ -46,7 +47,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Test class for the JobOfferResource REST controller.
  *
@@ -64,6 +64,8 @@ public class JobOfferResourceTest {
     private static final String UPDATED_LOCATION = "UPDATED_TEXT";
     private static final String DEFAULT_DESCRIPTION = "SAMPLE_TEXT";
     private static final String UPDATED_DESCRIPTION = "UPDATED_TEXT";
+    private static final JobOfferStatus DEFAULT_STATUS = JobOfferStatus.AVAILABLE;
+    private static final JobOfferStatus UPDATED_STATUS = JobOfferStatus.CANCELED;
 
     @Inject
     private PasswordEncoder passwordEncoder;
@@ -110,9 +112,11 @@ public class JobOfferResourceTest {
 
         ReflectionTestUtils.setField(jobOfferResource, "statisticRepository", mockStatisticRepository);
         ReflectionTestUtils.setField(jobOfferResource, "userRepository", mockUserRepository);
-        this.restJobOfferMockMvc = MockMvcBuilders.standaloneSetup(jobOfferResource)
+
+        restJobOfferMockMvc = MockMvcBuilders.standaloneSetup(jobOfferResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .build();
     }
 
 
@@ -122,6 +126,7 @@ public class JobOfferResourceTest {
         jobOffer.setTitle(DEFAULT_TITLE);
         jobOffer.setLocation(DEFAULT_LOCATION);
         jobOffer.setDescription(DEFAULT_DESCRIPTION);
+        jobOffer.setStatus(DEFAULT_STATUS);
     }
 
     @Test
@@ -143,6 +148,7 @@ public class JobOfferResourceTest {
         assertThat(testJobOffer.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testJobOffer.getLocation()).isEqualTo(DEFAULT_LOCATION);
         assertThat(testJobOffer.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testJobOffer.getStatus()).isEqualTo(DEFAULT_STATUS);
         int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(today, testJobOffer.getStartDate());
         assertThat(dateComparation).isEqualTo(0);
     }
@@ -154,7 +160,7 @@ public class JobOfferResourceTest {
 
         //Set the start date in the future
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis(1));
         jobOffer.setStartDate(tomorrow);
         // Create the JobOffer
         restJobOfferMockMvc.perform(post("/api/jobOffers")
@@ -169,6 +175,7 @@ public class JobOfferResourceTest {
         assertThat(testJobOffer.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testJobOffer.getLocation()).isEqualTo(DEFAULT_LOCATION);
         assertThat(testJobOffer.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testJobOffer.getStatus()).isEqualTo(DEFAULT_STATUS);
         int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(tomorrow, testJobOffer.getStartDate());
         assertThat(dateComparation).isEqualTo(0);
     }
@@ -180,7 +187,7 @@ public class JobOfferResourceTest {
 
         //Set the start date in the past
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date yesterday = new Date(today.getTime() - TimeUnit.DAYS.toMillis( 1 ));
+        Date yesterday = new Date(today.getTime() - TimeUnit.DAYS.toMillis(1));
         jobOffer.setStartDate(yesterday);
         // Create the JobOffer
         restJobOfferMockMvc.perform(post("/api/jobOffers")
@@ -294,9 +301,10 @@ public class JobOfferResourceTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(jobOffer.getId().intValue())))
-            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
-            .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
+            .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 
     @Test
@@ -310,9 +318,10 @@ public class JobOfferResourceTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(jobOffer.getId().intValue()))
-            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
-            .andExpect(jsonPath("$.location").value(DEFAULT_LOCATION.toString()))
-            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
+            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
+            .andExpect(jsonPath("$.location").value(DEFAULT_LOCATION))
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
 
     @Test
@@ -335,7 +344,7 @@ public class JobOfferResourceTest {
         jobOffer.setTitle(UPDATED_TITLE);
         jobOffer.setLocation(UPDATED_LOCATION);
         jobOffer.setDescription(UPDATED_DESCRIPTION);
-
+        jobOffer.setStatus(UPDATED_STATUS);
 
         restJobOfferMockMvc.perform(put("/api/jobOffers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -349,6 +358,7 @@ public class JobOfferResourceTest {
         assertThat(testJobOffer.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testJobOffer.getLocation()).isEqualTo(UPDATED_LOCATION);
         assertThat(testJobOffer.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testJobOffer.getStatus()).isEqualTo(UPDATED_STATUS);
     }
 
     @Test

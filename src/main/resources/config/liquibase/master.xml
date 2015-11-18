@@ -10,5 +10,6 @@
     <include file="classpath:config/liquibase/changelog/20151107022222_added_col_startDate_to_JobOffer.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20151109153800_added_col_applicationsCount_to_JobOffer.xml" relativeToChangelogFile="false"/>
     <include file="classpath:config/liquibase/changelog/20151115114822_added_col_endDate_to_JobOffer.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:config/liquibase/changelog/20151117182556_added_col_status_to_JobOffer.xml" relativeToChangelogFile="false"/>
     <!-- JHipster will add liquibase changelogs here -->
 </databaseChangeLog>

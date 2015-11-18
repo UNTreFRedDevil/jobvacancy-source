@@ -44,6 +44,7 @@
                     <th>Title</th>
                     <th>Location</th>
                     <th>Description</th>
+                    <th>Status</th>
                     <th>Applications count</th>
                     <th></th>
                 </tr>
@@ -54,6 +55,7 @@
                     <td>{{jobOffer.title}}</td>
                     <td>{{jobOffer.location}}</td>
                     <td>{{jobOffer.description}}</td>
+                    <td>{{jobOffer.status | jobOfferStatus}}</td>
                     <td>{{jobOffer.applicationsCount}}</td>
                     <td>
                         <button type="submit"

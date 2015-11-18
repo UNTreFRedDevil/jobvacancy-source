@@ -1,5 +1,6 @@
 package com.jobvacancy.domain;
 
+import com.jobvacancy.domain.enumeration.JobOfferStatus;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -31,6 +32,10 @@ public class JobOffer implements Serializable {
 
     @Column(name = "description")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private JobOfferStatus status;
 
     @Column(name = "start_date")
     @Type(type = "date")
@@ -76,6 +81,14 @@ public class JobOffer implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public JobOfferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(JobOfferStatus status) {
+        this.status = status;
     }
 
     public User getOwner() {
@@ -138,6 +151,7 @@ public class JobOffer implements Serializable {
             ", title='" + title + "'" +
             ", location='" + location + "'" +
             ", description='" + description + "'" +
+            ", status='" + status + "'" +
             ", startDate='" + startDate + "'" +
             ", endDate='" + endDate + "'" +
             ", applicationsCount=" + applicationsCount +
