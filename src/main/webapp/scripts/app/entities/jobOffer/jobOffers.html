@@ -46,6 +46,8 @@
                     <th>Description</th>
                     <th>Status</th>
                     <th>Applications count</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                     <th></th>
                 </tr>
             </thead>
@@ -57,6 +59,8 @@
                     <td>{{jobOffer.description}}</td>
                     <td>{{jobOffer.status | jobOfferStatus}}</td>
                     <td>{{jobOffer.applicationsCount}}</td>
+                    <td>{{jobOffer.startDate}}</td>
+                    <td>{{jobOffer.endDate}}</td>
                     <td>
                         <button type="submit"
                                 ui-sref="jobOffer.detail({id:jobOffer.id})"
