@@ -76,11 +76,15 @@ public class JobOfferResource {
         }
         int startDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
         int endDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(), today);
+        int startAndEndDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(),jobOffer.getStartDate());
         if (startDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers start date cannot be in the past").body(null);
         }
         if (endDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be in the past").body(null);
+        }
+        if (startAndEndDateComparation < 0 ){
+            return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be before the start date").body(null);
         }
         String currentLogin = SecurityUtils.getCurrentLogin();
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);

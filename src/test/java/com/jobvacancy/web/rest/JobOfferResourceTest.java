@@ -247,6 +247,28 @@ public class JobOfferResourceTest {
 
     @Test
     @Transactional
+    public void whenAJobOfferisDefinedWithAnEndDateBeforeTheStartDateItShouldNotBeCreatedAndShouldReturnBadRequest() throws Exception {
+        int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
+
+        //Set the start date in the past
+        Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+        Date dayAfterTomorrow = new Date(tomorrow.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+        jobOffer.setStartDate(dayAfterTomorrow);
+        jobOffer.setEndDate(tomorrow);
+        // Create the JobOffer
+        restJobOfferMockMvc.perform(post("/api/jobOffers")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the JobOffer in the database
+        List<JobOffer> jobOffers = jobOfferRepository.findAll();
+        assertThat(jobOffers).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
     public void whenAJobOfferisDefinedWithnEndDateInTheFutureItShouldBeCreatedOk() throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
 
