@@ -50,6 +50,22 @@
                     <span class="form-control-static">{{jobOffer.applicationsCount}}</span>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <span>Start Date</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{jobOffer.startDate |date: 'yyyy-MM-dd' }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>End Date</span>
+                </td>
+                <td>
+                    <span class="form-control-static">{{jobOffer.endDate |date: 'yyyy-MM-dd'}}</span>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
