@@ -75,7 +75,7 @@
         <div ng-show="editForm.endDate.$invalid">
             <p class="help-block"
                ng-show="editForm.endDate.$error">
-                The Job Offer was not saved, as the end date can not be in the past.
+                {{editForm.endDate.$errorMessage}}
             </p>
         </div>
     </div>

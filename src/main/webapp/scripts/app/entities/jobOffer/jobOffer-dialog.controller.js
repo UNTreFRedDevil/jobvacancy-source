@@ -22,7 +22,7 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
             if(typeof $scope.jobOffer.endDate == 'undefined'){
                 $scope.jobOffer.endDate = null;
             }
-            if (validateDate($scope.jobOffer.startDate) === true && validateDate($scope.jobOffer.endDate) === true){
+            if (validateDateIsNotInThePast($scope.jobOffer.startDate) === true && validateDateIsNotInThePast($scope.jobOffer.endDate) === true && validateEndDateIsGreaterThanStartDate($scope.jobOffer.startDate,$scope.jobOffer.endDate) === true){
                 $scope.editForm.startDate.$invalid=false;
                 $scope.editForm.startDate.$valid=true;
                 $scope.editForm.startDate.$error=false;
@@ -43,15 +43,22 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
                 }
             }
             else{
-                if(validateDate($scope.jobOffer.startDate) === false){
+                if(validateDateIsNotInThePast($scope.jobOffer.startDate) === false){
                     $scope.editForm.startDate.$invalid=true;
                     $scope.editForm.startDate.$valid=false;
                     $scope.editForm.startDate.$error=true;
                 }
-                if(validateDate($scope.jobOffer.endDate) === false){
+                if(validateDateIsNotInThePast($scope.jobOffer.endDate) === false){
                     $scope.editForm.endDate.$invalid=true;
                     $scope.editForm.endDate.$valid=false;
                     $scope.editForm.endDate.$error=true;
+                    $scope.editForm.endDate.$errorMessage = 'The Job Offer was not saved, as the end date can not be in the past.';
+                }
+                if(validateEndDateIsGreaterThanStartDate($scope.jobOffer.startDate,$scope.jobOffer.endDate) === false){
+                  $scope.editForm.endDate.$invalid=true;
+                  $scope.editForm.endDate.$valid=false;
+                  $scope.editForm.endDate.$error=true;
+                  $scope.editForm.endDate.$errorMessage = 'The Job Offer was not saved, as the end date can not be before the start date.';
                 }
                 document.getElementById("save-button").disabled = false;
             }
@@ -92,7 +99,7 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
            opened: false
        };
 
-       var validateDate = function(dateToValidate) {
+       var validateDateIsNotInThePast = function(dateToValidate) {
            console.log("Date: " + dateToValidate);
            if(dateToValidate === null){
                return true;
@@ -110,6 +117,23 @@ angular.module('jobvacancyApp').controller('JobOfferDialogController',
            var compare = inputDate.getTime() >= today.getTime();
            console.log("Comparo la fecha de hoy: " +today + " con la fecha ingresada: "+ inputDate +" y el resultado es: "+ compare);
            return compare;
+       };
+
+       var validateEndDateIsGreaterThanStartDate = function(startDate,endDate){
+         var startDateToValidate = new Date(startDate);
+         var endDateToValidate = new Date(endDate);
+         startDateToValidate.setHours(0);
+         startDateToValidate.setMilliseconds(0);
+         startDateToValidate.setMinutes(0);
+         startDateToValidate.setSeconds(0);
+
+         endDateToValidate.setHours(0);
+         endDateToValidate.setMilliseconds(0);
+         endDateToValidate.setMinutes(0);
+         endDateToValidate.setSeconds(0);
+
+         var compare = endDateToValidate.getTime() >= startDateToValidate.getTime();
+         return compare;
        };
 
        var tomorrow = new Date();
