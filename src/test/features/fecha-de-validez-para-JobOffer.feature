@@ -17,3 +17,8 @@ Feature: Es posible definir una fecha de validez para las JobOffers
         Given Estoy logueado como oferente
         When Creo una oferta con fecha de validez pasada
         Then La oferta no se crea
+
+    Scenario: Publicación de oferta con fecha de validez anterior a la fecha de inicio
+        Given Estoy logueado como oferente
+        When Creo una oferta con fecha anterior a la fecha de inicio
+        Then La oferta no se crea
