@@ -66,9 +66,6 @@ public class JobOfferResourceTest {
     private static final JobOfferStatus DEFAULT_STATUS = JobOfferStatus.AVAILABLE;
     private static final JobOfferStatus UPDATED_STATUS = JobOfferStatus.CANCELED;
 
-    // @Inject
-    // private PasswordEncoder passwordEncoder;
-
     @Inject
     private UserRepository userRepository;
 
@@ -93,8 +90,6 @@ public class JobOfferResourceTest {
     private MockMvc restJobOfferMockMvc;
 
     private JobOffer jobOffer;
-
-    // private User user;
 
     @PostConstruct
     public void setup() {
@@ -348,7 +343,6 @@ public class JobOfferResourceTest {
         jobOffer.setTitle(UPDATED_TITLE);
         jobOffer.setLocation(UPDATED_LOCATION);
         jobOffer.setDescription(UPDATED_DESCRIPTION);
-        jobOffer.setStatus(UPDATED_STATUS);
 
         restJobOfferMockMvc.perform(put("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isOk());
@@ -360,7 +354,37 @@ public class JobOfferResourceTest {
         assertThat(testJobOffer.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testJobOffer.getLocation()).isEqualTo(UPDATED_LOCATION);
         assertThat(testJobOffer.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testJobOffer.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testJobOffer.getStatus()).isEqualTo(DEFAULT_STATUS);
+    }
+
+    @Test
+    @Transactional
+    public void tryToUpdateTheStatusOfAJobOfferShouldReturnBadRequest() throws Exception {
+        // Initialize the database
+        jobOfferRepository.saveAndFlush(jobOffer);
+
+        // Update the jobOffer
+        jobOffer.setStatus(UPDATED_STATUS);
+
+        restJobOfferMockMvc.perform(put("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    public void tryToFinishAJobOfferShouldReturnOk() throws Exception {
+        // Initialize the database
+        jobOfferRepository.saveAndFlush(jobOffer);
+
+        // Update the jobOffer
+        jobOffer.setStatus(UPDATED_STATUS);
+
+        restJobOfferMockMvc.perform(put("/api/finish-job-offer").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isOk());
+
+        // Validate the JobOffer in the database
+        JobOffer savedJobOffer = jobOfferRepository.findOne(jobOffer.getId());
+        assertThat(savedJobOffer.getStatus()).isEqualTo(UPDATED_STATUS);
     }
 
     @Test

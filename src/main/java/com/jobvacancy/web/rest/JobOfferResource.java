@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.JobOffer;
 import com.jobvacancy.domain.Statistic;
 import com.jobvacancy.domain.User;
+import com.jobvacancy.domain.enumeration.JobOfferStatus;
 import com.jobvacancy.repository.JobOfferRepository;
 import com.jobvacancy.repository.StatisticRepository;
 import com.jobvacancy.repository.UserRepository;
@@ -44,6 +45,8 @@ public class JobOfferResource {
 
     private static final Long INITIAL_APPLICATIONS_COUNT = 0L;
 
+    private static final JobOfferStatus INITIAL_STATUS = JobOfferStatus.AVAILABLE;
+
     private final Logger log = LoggerFactory.getLogger(JobOfferResource.class);
 
     @Inject
@@ -64,10 +67,13 @@ public class JobOfferResource {
     @Timed
     public ResponseEntity<JobOffer> createJobOffer(@Valid @RequestBody JobOffer jobOffer) throws URISyntaxException {
         log.debug("REST request to save JobOffer : {}", jobOffer);
+
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
         if (jobOffer.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new jobOffer cannot already have an ID").body(null);
         }
+
         if (jobOffer.getStartDate() == null) {
             jobOffer.setStartDate(today);
         }
@@ -75,22 +81,28 @@ public class JobOfferResource {
         if (jobOffer.getEndDate() == null) {
             jobOffer.setEndDate(DateUtils.addMonths(today, 1));
         }
+
         int startDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
         int endDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(), today);
         int startAndEndDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(), jobOffer.getStartDate());
+
         if (startDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers start date cannot be in the past").body(null);
         }
+
         if (endDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be in the past").body(null);
         }
+
         if (startAndEndDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be before the start date").body(null);
         }
+
         String currentLogin = SecurityUtils.getCurrentLogin();
         Optional<User> currentUser = userRepository.findOneByLogin(currentLogin);
         jobOffer.setOwner(currentUser.get());
         jobOffer.setApplicationsCount(INITIAL_APPLICATIONS_COUNT);
+        jobOffer.setStatus(INITIAL_STATUS);
         JobOffer result = jobOfferRepository.save(jobOffer);
         Statistic totalJobOffers = statisticRepository.getPublishedJobOffers();
         totalJobOffers.setValue(totalJobOffers.getValue() + 1);
@@ -110,10 +122,40 @@ public class JobOfferResource {
     @Timed
     public ResponseEntity<JobOffer> updateJobOffer(@Valid @RequestBody JobOffer jobOffer) throws URISyntaxException {
         log.debug("REST request to update JobOffer : {}", jobOffer);
+
+        if (jobOffer.getStatus() != JobOfferStatus.AVAILABLE) {
+            return ResponseEntity.badRequest()
+                .header("Failure", "The status of a JobOffer can't be changed")
+                .body(null);
+        }
+
+        log.debug("REST request to update JobOffer : {}", jobOffer);
+
         if (jobOffer.getId() == null) {
             return createJobOffer(jobOffer);
         }
+
+        log.debug("REST request to update JobOffer : {}", jobOffer);
+
         JobOffer result = jobOfferRepository.save(jobOffer);
+
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert("jobOffer", jobOffer.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * PUT  /jobOffers -> Finish an existing jobOffer.
+     */
+    @RequestMapping(value = "/finish-job-offer",
+        method = RequestMethod.PUT,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<JobOffer> finishJobOffer(@Valid @RequestBody JobOffer jobOffer) throws URISyntaxException {
+        log.debug("REST request to update JobOffer : {}", jobOffer);
+
+        JobOffer result = jobOfferRepository.save(jobOffer);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("jobOffer", jobOffer.getId().toString()))
             .body(result);
