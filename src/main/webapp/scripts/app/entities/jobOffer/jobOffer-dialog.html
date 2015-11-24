@@ -32,15 +32,6 @@
                     ng-model="jobOffer.description">
         </div>
         <div class="form-group">
-            <label for="field_status">Status</label>
-            <select class="form-control" name="status" ng-model="jobOffer.status" id="field_status">
-                <option value="AVAILABLE">Available</option>
-                <option value="JOBVACANCY_HIRED">Satisfied with a JobVacancy candidate</option>
-                <option value="EXTERNAL_HIRED">Satisfied with an external candidate</option>
-                <option value="CANCELED">Canceled offer, no one was hired</option>
-            </select>
-        </div>
-        <div class="form-group">
             <label for="field_description">Start Date</label>
             <p class="input-group">
                 <input type="text" name="startDate" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="jobOffer.startDate"

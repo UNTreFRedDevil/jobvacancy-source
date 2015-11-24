@@ -45,7 +45,7 @@
                     <th>Location</th>
                     <th>Description</th>
                     <th>Status</th>
-                    <th>Applications count</th>
+                    <th>Applications</th>
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th></th>
@@ -69,13 +69,20 @@
                         </button>
                         <button type="submit"
                                 ui-sref="jobOffer.edit({id:jobOffer.id})"
-                                class="btn btn-primary btn-sm">
+                                class="btn btn-primary btn-sm"
+                                ng-show="jobOffer.status === 'AVAILABLE'">
                             <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span> Edit</span>
                         </button>
                         <button type="submit"
                                 ui-sref="jobOffer.copy({id:jobOffer.id})"
                                 class="btn btn-warning btn-sm">
                             <span class="glyphicon glyphicon-copy"></span>&nbsp;<span> Copy</span>
+                        </button>
+                        <button type="submit"
+                                ui-sref="jobOffer.finish({id:jobOffer.id})"
+                                class="btn btn-warning btn-sm"
+                                ng-show="jobOffer.status === 'AVAILABLE'">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span> Finish</span>
                         </button>
                         <button type="submit"
                                 ng-click="delete(jobOffer.id)"
