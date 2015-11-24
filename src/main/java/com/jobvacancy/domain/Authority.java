@@ -2,10 +2,11 @@ package com.jobvacancy.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -17,6 +18,8 @@ import java.io.Serializable;
 @Table(name = "JHI_AUTHORITY")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Authority implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotNull
     @Size(min = 0, max = 50)
@@ -57,8 +60,6 @@ public class Authority implements Serializable {
 
     @Override
     public String toString() {
-        return "Authority{" +
-                "name='" + name + '\'' +
-                "}";
+        return "Authority{" + "name='" + name + '\'' + "}";
     }
 }

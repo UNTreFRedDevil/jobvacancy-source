@@ -3,18 +3,17 @@ package com.jobvacancy.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import org.hibernate.annotations.Type;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.joda.time.DateTime;
 
 /**
  * A user.
@@ -23,6 +22,8 @@ import org.joda.time.DateTime;
 @Table(name = "JHI_USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class User extends AbstractAuditingEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,7 +37,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @JsonIgnore
     @NotNull
-    @Size(min = 60, max = 60) 
+    @Size(min = 60, max = 60)
     @Column(length = 60)
     private String password;
 
@@ -75,10 +76,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(
-            name = "JHI_USER_AUTHORITY",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
+    @JoinTable(name = "JHI_USER_AUTHORITY", joinColumns = {
+        @JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "authority_name", referencedColumnName = "name")})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Authority> authorities = new HashSet<>();
 
@@ -160,11 +160,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
     }
 
     public DateTime getResetDate() {
-       return resetDate;
+        return resetDate;
     }
 
     public void setResetDate(DateTime resetDate) {
-       this.resetDate = resetDate;
+        this.resetDate = resetDate;
     }
 
     public String getLangKey() {
@@ -216,14 +216,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", activated='" + activated + '\'' +
-                ", langKey='" + langKey + '\'' +
-                ", activationKey='" + activationKey + '\'' +
-                "}";
+        return "User{" + "login='" + login + '\'' + ", firstName='" + firstName + '\'' + ", lastName='" + lastName
+            + '\'' + ", email='" + email + '\'' + ", activated='" + activated + '\'' + ", langKey='" + langKey
+            + '\'' + ", activationKey='" + activationKey + '\'' + "}";
     }
 }

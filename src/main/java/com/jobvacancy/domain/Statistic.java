@@ -15,6 +15,8 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Statistic implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -60,7 +62,8 @@ public class Statistic implements Serializable {
 
         Statistic statistic = (Statistic) o;
 
-        if (!Objects.equals(id, statistic.id)) return false;
+        if (!Objects.equals(id, statistic.id))
+            return false;
 
         return true;
     }
@@ -72,10 +75,6 @@ public class Statistic implements Serializable {
 
     @Override
     public String toString() {
-        return "Statistic{" +
-            "id=" + id +
-            ", metric='" + metric + "'" +
-            ", value='" + value + "'" +
-            '}';
+        return "Statistic{" + "id=" + id + ", metric='" + metric + "'" + ", value='" + value + "'" + '}';
     }
 }

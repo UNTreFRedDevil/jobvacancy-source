@@ -42,7 +42,8 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class JobOfferResource {
 
-    private static final Long INITIAL_APPLICATIONS_COUNT = new Long(0);
+    private static final Long INITIAL_APPLICATIONS_COUNT = 0L;
+
     private final Logger log = LoggerFactory.getLogger(JobOfferResource.class);
 
     @Inject
@@ -72,18 +73,18 @@ public class JobOfferResource {
         }
 
         if (jobOffer.getEndDate() == null) {
-            jobOffer.setEndDate(DateUtils.addMonths(today,1));
+            jobOffer.setEndDate(DateUtils.addMonths(today, 1));
         }
         int startDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getStartDate(), today);
         int endDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(), today);
-        int startAndEndDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(),jobOffer.getStartDate());
+        int startAndEndDateComparation = DateTimeComparator.getDateOnlyInstance().compare(jobOffer.getEndDate(), jobOffer.getStartDate());
         if (startDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers start date cannot be in the past").body(null);
         }
         if (endDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be in the past").body(null);
         }
-        if (startAndEndDateComparation < 0 ){
+        if (startAndEndDateComparation < 0) {
             return ResponseEntity.badRequest().header("Failure", "A jobOffers end date cannot be before the start date").body(null);
         }
         String currentLogin = SecurityUtils.getCurrentLogin();
@@ -243,7 +244,7 @@ public class JobOfferResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<List<JobOffer>> getAllOffers(Pageable pageable) throws URISyntaxException {
-        Page<JobOffer> page = new PageImpl(jobOfferRepository.findAllCurrent());
+        Page<JobOffer> page = new PageImpl<JobOffer>(jobOfferRepository.findAllCurrent());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/offers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

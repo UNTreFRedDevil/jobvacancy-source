@@ -24,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -67,8 +66,8 @@ public class JobOfferResourceTest {
     private static final JobOfferStatus DEFAULT_STATUS = JobOfferStatus.AVAILABLE;
     private static final JobOfferStatus UPDATED_STATUS = JobOfferStatus.CANCELED;
 
-    @Inject
-    private PasswordEncoder passwordEncoder;
+    // @Inject
+    // private PasswordEncoder passwordEncoder;
 
     @Inject
     private UserRepository userRepository;
@@ -95,7 +94,7 @@ public class JobOfferResourceTest {
 
     private JobOffer jobOffer;
 
-    private User user;
+    // private User user;
 
     @PostConstruct
     public void setup() {
@@ -103,7 +102,8 @@ public class JobOfferResourceTest {
         JobOfferResource jobOfferResource = new JobOfferResource();
         ReflectionTestUtils.setField(jobOfferResource, "jobOfferRepository", jobOfferRepository);
 
-        // TODO: this should be refactored in a based class because is a common concern
+        // TODO: this should be refactored in a based class because is a common
+        // concern
         Optional<User> user = userRepository.findOneByLogin("user");
         when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
 
@@ -114,11 +114,9 @@ public class JobOfferResourceTest {
         ReflectionTestUtils.setField(jobOfferResource, "userRepository", mockUserRepository);
 
         restJobOfferMockMvc = MockMvcBuilders.standaloneSetup(jobOfferResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setMessageConverters(jacksonMessageConverter)
+            .setCustomArgumentResolvers(pageableArgumentResolver).setMessageConverters(jacksonMessageConverter)
             .build();
     }
-
 
     @Before
     public void initTest() {
@@ -136,10 +134,8 @@ public class JobOfferResourceTest {
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isCreated());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isCreated());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -158,15 +154,13 @@ public class JobOfferResourceTest {
     public void whenAJobOfferisDefinedWithAStartDateInTheFutureItShouldBeCreatedOk() throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
 
-        //Set the start date in the future
+        // Set the start date in the future
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis(1));
         jobOffer.setStartDate(tomorrow);
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isCreated());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isCreated());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -182,18 +176,17 @@ public class JobOfferResourceTest {
 
     @Test
     @Transactional
-    public void whenAJobOfferisDefinedWithAStartDateInThePastItShouldNotBeCreatedAndShouldReturnBadRequest() throws Exception {
+    public void whenAJobOfferisDefinedWithAStartDateInThePastItShouldNotBeCreatedAndShouldReturnBadRequest()
+        throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
 
-        //Set the start date in the past
+        // Set the start date in the past
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date yesterday = new Date(today.getTime() - TimeUnit.DAYS.toMillis(1));
         jobOffer.setStartDate(yesterday);
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isBadRequest());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isBadRequest());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -208,10 +201,8 @@ public class JobOfferResourceTest {
         Date todayPlusOneMonth = DateUtils.addMonths(today, 1);
 
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isCreated());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isCreated());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -220,25 +211,24 @@ public class JobOfferResourceTest {
         assertThat(testJobOffer.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testJobOffer.getLocation()).isEqualTo(DEFAULT_LOCATION);
         assertThat(testJobOffer.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(todayPlusOneMonth, testJobOffer.getEndDate());
+        int dateComparation = DateTimeComparator.getDateOnlyInstance().compare(todayPlusOneMonth,
+            testJobOffer.getEndDate());
         assertThat(dateComparation).isEqualTo(0);
     }
 
-
     @Test
     @Transactional
-    public void whenAJobOfferisDefinedWithAnEndDateInThePastItShouldNotBeCreatedAndShouldReturnBadRequest() throws Exception {
+    public void whenAJobOfferisDefinedWithAnEndDateInThePastItShouldNotBeCreatedAndShouldReturnBadRequest()
+        throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
 
-        //Set the start date in the past
+        // Set the start date in the past
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date yesterday = new Date(today.getTime() - TimeUnit.DAYS.toMillis( 1 ));
+        Date yesterday = new Date(today.getTime() - TimeUnit.DAYS.toMillis(1));
         jobOffer.setEndDate(yesterday);
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isBadRequest());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isBadRequest());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -247,20 +237,19 @@ public class JobOfferResourceTest {
 
     @Test
     @Transactional
-    public void whenAJobOfferisDefinedWithAnEndDateBeforeTheStartDateItShouldNotBeCreatedAndShouldReturnBadRequest() throws Exception {
+    public void whenAJobOfferisDefinedWithAnEndDateBeforeTheStartDateItShouldNotBeCreatedAndShouldReturnBadRequest()
+        throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
 
-        //Set the start date in the past
+        // Set the start date in the past
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis( 1 ));
-        Date dayAfterTomorrow = new Date(tomorrow.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis(1));
+        Date dayAfterTomorrow = new Date(tomorrow.getTime() + TimeUnit.DAYS.toMillis(1));
         jobOffer.setStartDate(dayAfterTomorrow);
         jobOffer.setEndDate(tomorrow);
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isBadRequest());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isBadRequest());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -272,15 +261,13 @@ public class JobOfferResourceTest {
     public void whenAJobOfferisDefinedWithnEndDateInTheFutureItShouldBeCreatedOk() throws Exception {
         int databaseSizeBeforeCreate = jobOfferRepository.findAll().size();
 
-        //Set the start date in the future
+        // Set the start date in the future
         Date today = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis( 1 ));
+        Date tomorrow = new Date(today.getTime() + TimeUnit.DAYS.toMillis(1));
         jobOffer.setEndDate(tomorrow);
         // Create the JobOffer
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isCreated());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isCreated());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -302,10 +289,8 @@ public class JobOfferResourceTest {
 
         // Create the JobOffer, which fails.
 
-        restJobOfferMockMvc.perform(post("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isBadRequest());
+        restJobOfferMockMvc.perform(post("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isBadRequest());
 
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
         assertThat(jobOffers).hasSize(databaseSizeBeforeTest);
@@ -319,8 +304,7 @@ public class JobOfferResourceTest {
         jobOfferRepository.saveAndFlush(jobOffer);
 
         // Get all the jobOffers
-        restJobOfferMockMvc.perform(get("/api/jobOffers"))
-            .andExpect(status().isOk())
+        restJobOfferMockMvc.perform(get("/api/jobOffers")).andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(jobOffer.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
@@ -336,8 +320,7 @@ public class JobOfferResourceTest {
         jobOfferRepository.saveAndFlush(jobOffer);
 
         // Get the jobOffer
-        restJobOfferMockMvc.perform(get("/api/jobOffers/{id}", jobOffer.getId()))
-            .andExpect(status().isOk())
+        restJobOfferMockMvc.perform(get("/api/jobOffers/{id}", jobOffer.getId())).andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(jobOffer.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
@@ -350,8 +333,7 @@ public class JobOfferResourceTest {
     @Transactional
     public void getNonExistingJobOffer() throws Exception {
         // Get the jobOffer
-        restJobOfferMockMvc.perform(get("/api/jobOffers/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restJobOfferMockMvc.perform(get("/api/jobOffers/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -368,10 +350,8 @@ public class JobOfferResourceTest {
         jobOffer.setDescription(UPDATED_DESCRIPTION);
         jobOffer.setStatus(UPDATED_STATUS);
 
-        restJobOfferMockMvc.perform(put("/api/jobOffers")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(jobOffer)))
-            .andExpect(status().isOk());
+        restJobOfferMockMvc.perform(put("/api/jobOffers").contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(jobOffer))).andExpect(status().isOk());
 
         // Validate the JobOffer in the database
         List<JobOffer> jobOffers = jobOfferRepository.findAll();
@@ -392,8 +372,8 @@ public class JobOfferResourceTest {
         int databaseSizeBeforeDelete = jobOfferRepository.findAll().size();
 
         // Get the jobOffer
-        restJobOfferMockMvc.perform(delete("/api/jobOffers/{id}", jobOffer.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+        restJobOfferMockMvc
+            .perform(delete("/api/jobOffers/{id}", jobOffer.getId()).accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
         // Validate the database is empty
