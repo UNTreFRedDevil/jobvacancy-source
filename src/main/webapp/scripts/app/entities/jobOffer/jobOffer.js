@@ -109,5 +109,29 @@ angular.module('jobvacancyApp')
                         $state.go('^');
                     });
                 }]
+            })
+            .state('jobOffer.finish', {
+                parent: 'jobOffer',
+                url: '/{id}/finish',
+                data: {
+                    authorities: ['ROLE_USER'],
+                },
+                onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
+                    $modal.open({
+                        templateUrl: 'scripts/app/entities/jobOffer/jobOffer-finish-dialog.html',
+                        controller: 'JobOfferFinishDialogController',
+                        size: 'lg',
+                        resolve: {
+                            entity: ['JobOffer', function(JobOffer) {
+                                return JobOffer.get({id : $stateParams.id});
+                            }],
+                        }
+                    }).result.then(function(result) {
+                        debugger;
+                        $state.go('jobOffer', null, { reload: true });
+                    }, function() {
+                        $state.go('^');
+                    });
+                }]
             });
     });
