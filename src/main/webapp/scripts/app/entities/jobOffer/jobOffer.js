@@ -127,7 +127,6 @@ angular.module('jobvacancyApp')
                             }],
                         }
                     }).result.then(function(result) {
-                        debugger;
                         $state.go('jobOffer', null, { reload: true });
                     }, function() {
                         $state.go('^');
